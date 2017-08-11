@@ -10,7 +10,7 @@
  
 int main(int argc , char *argv[])
 {
-    WSADATA wsa;
+    WSADATA wsa;/* Structure for WinSock setup communication */
     SOCKET s , new_socket, file_socket;
     struct sockaddr_in server , client, receiver;
     int c;
@@ -22,7 +22,7 @@ int main(int argc , char *argv[])
 	FILE *fp;
  
     printf("\nInitialising Winsock...");
-    if (WSAStartup(MAKEWORD(2,2),&wsa) != 0)
+    if (WSAStartup(MAKEWORD(2,2),&wsa) != 0)/* Load Winsock 2.0 DLL */
     {
         printf("Failed. Error Code : %d",WSAGetLastError());
         return 1;
@@ -68,14 +68,15 @@ int main(int argc , char *argv[])
         message = "WELCOME.... plesase type this commands as they are wrritten in the menu below\n\n";
         send(new_socket , message , strlen(message) , 0);
 
-		fp = fopen("contributions.txt", "a+");
+		fp = fopen("server.txt", "a+");
 		if(fp == NULL){
 			printf("file not found\n");
 			return 1;
 		}
 		else{
-			printf("Created file contribution.txt\n");
+			printf("Created file server.txt\n");
 		}
+		/* Receive message from client */
 		nRecv = recv(new_socket, TheData, 256, 0);
 		if(nRecv < 0){
 			printf("ERROR reading from the socket",WSAGetLastError());
@@ -86,7 +87,8 @@ int main(int argc , char *argv[])
 			break;
 		}
 		while(nRecv > 0){
-			printf("okk");
+			printf("Ok");
+			//write details in variable TheData to file represented by pointer fp
 			nWrite = fwrite(TheData, sizeof(char), nRecv, fp);
 			
 			if(nWrite<=0){
@@ -95,13 +97,6 @@ int main(int argc , char *argv[])
 			nRecv -= nWrite;
 		
 		}
-		
-	
-		
-		
-		
-		
-		
     }
      
     if (new_socket == INVALID_SOCKET)
@@ -109,12 +104,7 @@ int main(int argc , char *argv[])
         printf("accept failed with error code : %d" , WSAGetLastError());
         return 1;
     }
-	
-	
- 
- getchar();
-    /*closesocket(s);
-    WSACleanup();*/
-     
+    closesocket(s);
+    WSACleanup();
     return 0;
 }
